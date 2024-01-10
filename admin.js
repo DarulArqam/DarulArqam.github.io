@@ -2,7 +2,7 @@
 window.onload = displayUserData;
 
 function displayUserData() {
-    const container = document.querySelector('.container');
+    const container = document.getElementById('userList');
 
     // Loop through all users in localStorage
     for (let i = 0; i < localStorage.length; i++) {
