@@ -1,3 +1,13 @@
+// Check if the user has signed up
+const hasSignedUp = localStorage.getItem('hasSignedUp');
+
+// Display the appropriate form based on whether the user has signed up
+if (hasSignedUp) {
+    showLogin();
+} else {
+    showSignUp();
+}
+
 function validateSignUp() {
     const username = document.getElementById('username').value;
     const email = document.getElementById('email').value;
@@ -14,13 +24,10 @@ function validateSignUp() {
     localStorage.setItem('username', username);
     localStorage.setItem('email', email);
     localStorage.setItem('password', password);
+    localStorage.setItem('hasSignedUp', true);
 
-    // Simulate successful signup
-    alert('Sign up successful!');
-
-    // Clear form fields and error message
-    document.getElementById('authForm').reset();
-    errorMessage.textContent = '';
+    // Redirect to signup success page
+    window.location.href = 'signup.html';
 }
 
 function validateLogin() {
@@ -34,8 +41,9 @@ function validateLogin() {
 
     // Simple validation: Check if entered credentials match stored credentials
     if (loginUsername === storedUsername && loginPassword === storedPassword) {
-        // Simulate successful login
-        alert('Login successful!');
+        // Redirect to login success page
+        alert(`Login successful! Hello ${storedUsername}. Redirecting...`);
+        window.location.href = 'login-success.html';
     } else {
         loginErrorMessage.textContent = 'Invalid username or password. Please try again.';
     }
@@ -51,4 +59,9 @@ function showSignUp() {
     document.getElementById('loginForm').classList.add('hidden');
     document.getElementById('authForm').classList.remove('hidden');
     document.getElementById('errorMessage').textContent = '';
+}
+
+function redirectToSignUp() {
+    // Redirect to the signup page
+    window.location.href = 'index.html';
 }
