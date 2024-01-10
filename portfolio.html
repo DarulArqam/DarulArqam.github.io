@@ -21,5 +21,22 @@
     </div>
 
     <script src="script.js"></script>
+<script>
+    // Assuming the username is stored in localStorage
+    const username = localStorage.getItem('username');
+
+    // Check if the user is an admin
+    const isAdmin = checkAdminStatus(username);
+
+    // Redirect based on admin status
+    if (isAdmin) {
+        window.location.href = 'admin.html';
+    } else {
+        // Display the regular portfolio content
+        // You can add your existing logic or functions here
+        displayPortfolioGreeting();
+        // Add more functionality as needed...
+    }
+</script>
 </body>
 </html>
