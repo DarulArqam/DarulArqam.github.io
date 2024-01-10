@@ -4,12 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <title>Sign Up Success</title>
+    <title>Log In</title>
 </head>
-<body>
+<body style="background-image: url('DarulArqam.github.io/Images/Masjid.avif');">
     <div class="container">
-        <h2>Hello <span id="greetingUsername"></span></h2>
-        <p>You have successfully signed up!</p>
+        <form class="form" id="loginForm">
+            <h2>Log In</h2>
+            <label for="loginUsername">Username:</label>
+            <input type="text" id="loginUsername" required>
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" required>
+            <button type="button" onclick="validateLogin()">Log In</button>
+            <p class="small-text">Don't have an account? <a href="signup.html">Sign Up</a></p>
+            <p id="loginErrorMessage" class="error-message"></p>
+        </form>
     </div>
 
     <script src="script.js"></script>
