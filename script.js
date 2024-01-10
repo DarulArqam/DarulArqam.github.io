@@ -20,10 +20,16 @@ function validateSignUp() {
         return;
     }
 
-    // Save user information to local storage (for demonstration purposes)
-    localStorage.setItem('username', username);
-    localStorage.setItem('email', email);
-    localStorage.setItem('password', password);
+    // Create user object
+    const user = {
+        username: username,
+        email: email,
+        password: password,
+        isAdmin: false // Set isAdmin to false initially
+    };
+
+    // Save user information to local storage
+    localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('hasSignedUp', true);
 
     // Redirect to signup success page
@@ -36,13 +42,12 @@ function validateLogin() {
     const loginErrorMessage = document.getElementById('loginErrorMessage');
 
     // Retrieve user information from local storage
-    const storedUsername = localStorage.getItem('username');
-    const storedPassword = localStorage.getItem('password');
+    const storedUser = JSON.parse(localStorage.getItem('user'));
 
     // Simple validation: Check if entered credentials match stored credentials
-    if (loginUsername === storedUsername && loginPassword === storedPassword) {
+    if (storedUser && loginUsername === storedUser.username && loginPassword === storedUser.password) {
         // Redirect to login success page
-        alert(`Login successful! Hello ${storedUsername}. Redirecting...`);
+        alert(`Login successful! Hello ${storedUser.username}. Redirecting...`);
         window.location.href = 'portfolio.html';
     } else {
         loginErrorMessage.textContent = 'Invalid username or password. Please try again.';
@@ -62,13 +67,13 @@ function showSignUp() {
 }
 
 function displayPortfolioGreeting() {
-    // Retrieve the username from localStorage (you may need to modify this based on your authentication flow)
-    const username = localStorage.getItem('username');
+    // Retrieve the username from local storage (you may need to modify this based on your authentication flow)
+    const storedUser = JSON.parse(localStorage.getItem('user'));
 
     // Check if the username is available
-    if (username) {
+    if (storedUser && storedUser.username) {
         // Update the placeholder with the username
-        document.getElementById('usernamePlaceholder').innerText = username;
+        document.getElementById('usernamePlaceholder').innerText = storedUser.username;
     } else {
         // If username is not available, redirect to the login page
         window.location.href = 'index.html';
@@ -84,11 +89,11 @@ function redirectToSignUp() {
 }
 
 function makeUserAdmin(username) {
-    const userData = JSON.parse(localStorage.getItem(username));
+    const storedUser = JSON.parse(localStorage.getItem('user'));
 
-    if (userData) {
-        userData.isAdmin = true;
-        localStorage.setItem(username, JSON.stringify(userData));
+    if (storedUser && storedUser.username === username) {
+        storedUser.isAdmin = true;
+        localStorage.setItem('user', JSON.stringify(storedUser));
         console.log(`${username} is now an admin!`);
     } else {
         console.error(`${username} not found in localStorage.`);
@@ -99,13 +104,11 @@ function makeUserAdmin(username) {
 makeUserAdmin('Yoosif');
 
 function checkAdminStatus(username) {
-    const userData = JSON.parse(localStorage.getItem(username));
+    const storedUser = JSON.parse(localStorage.getItem('user'));
 
-    if (userData && userData.isAdmin) {
+    if (storedUser && storedUser.isAdmin) {
         return true; // User is an admin
     } else {
         return false; // User is not an admin
     }
 }
-
-console.log(checkAdminStatus('Yoosif')); // Log the result for debugging
