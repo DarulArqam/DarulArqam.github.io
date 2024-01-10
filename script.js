@@ -43,7 +43,7 @@ function validateLogin() {
     if (loginUsername === storedUsername && loginPassword === storedPassword) {
         // Redirect to login success page
         alert(`Login successful! Hello ${storedUsername}. Redirecting...`);
-        window.location.href = 'login-success.html';
+        window.location.href = 'portfolio.html';
     } else {
         loginErrorMessage.textContent = 'Invalid username or password. Please try again.';
     }
