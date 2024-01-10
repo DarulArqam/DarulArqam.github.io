@@ -78,6 +78,10 @@ function displayPortfolioGreeting() {
         // If username is not available, redirect to the login page
         window.location.href = 'index.html';
     }
+
+    // Check admin status after the page has loaded
+    const isAdmin = checkAdminStatus(storedUser.username);
+    console.log(`Is ${storedUser.username} an admin? ${isAdmin}`);
 }
 
 // Call the function when the portfolio page loads
@@ -112,3 +116,5 @@ function checkAdminStatus(username) {
         return false; // User is not an admin
     }
 }
+
+console.log(checkAdminStatus('Yoosif')); // Log the result for debugging
