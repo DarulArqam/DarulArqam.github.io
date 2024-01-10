@@ -107,3 +107,5 @@ function checkAdminStatus(username) {
         return false; // User is not an admin
     }
 }
+
+console.log(checkAdminStatus('Yoosif')); // Log the result for debugging
