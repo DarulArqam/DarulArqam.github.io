@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <title>Sign Up</title>
+    <title>Sign Up / Log In</title>
 </head>
 <body>
     <div class="container">
-        <form class="form" id="signupForm">
+        <form class="form" id="authForm">
             <h2>Sign Up</h2>
             <label for="username">Username:</label>
             <input type="text" id="username" required>
@@ -16,8 +16,20 @@
             <input type="email" id="email" required>
             <label for="password">Password:</label>
             <input type="password" id="password" required>
-            <button type="button" onclick="validateForm()">Sign Up</button>
+            <button type="button" onclick="validateSignUp()">Sign Up</button>
+            <p class="small-text">Already have an account? <span onclick="showLogin()">Log In</span></p>
             <p id="errorMessage" class="error-message"></p>
+        </form>
+
+        <form class="form hidden" id="loginForm">
+            <h2>Log In</h2>
+            <label for="loginUsername">Username:</label>
+            <input type="text" id="loginUsername" required>
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" required>
+            <button type="button" onclick="validateLogin()">Log In</button>
+            <p class="small-text">Don't have an account? <span onclick="showSignUp()">Sign Up</span></p>
+            <p id="loginErrorMessage" class="error-message"></p>
         </form>
     </div>
 

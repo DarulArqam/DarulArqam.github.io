@@ -1,4 +1,4 @@
-function validateForm() {
+function validateSignUp() {
     const username = document.getElementById('username').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -10,10 +10,45 @@ function validateForm() {
         return;
     }
 
-    // Simulate successful signup (you would replace this with actual server-side logic)
-    alert(`Sign up successful!\nUsername: ${username}\nEmail: ${email}`);
+    // Save user information to local storage (for demonstration purposes)
+    localStorage.setItem('username', username);
+    localStorage.setItem('email', email);
+    localStorage.setItem('password', password);
+
+    // Simulate successful signup
+    alert('Sign up successful!');
 
     // Clear form fields and error message
-    document.getElementById('signupForm').reset();
+    document.getElementById('authForm').reset();
     errorMessage.textContent = '';
+}
+
+function validateLogin() {
+    const loginUsername = document.getElementById('loginUsername').value;
+    const loginPassword = document.getElementById('loginPassword').value;
+    const loginErrorMessage = document.getElementById('loginErrorMessage');
+
+    // Retrieve user information from local storage
+    const storedUsername = localStorage.getItem('username');
+    const storedPassword = localStorage.getItem('password');
+
+    // Simple validation: Check if entered credentials match stored credentials
+    if (loginUsername === storedUsername && loginPassword === storedPassword) {
+        // Simulate successful login
+        alert('Login successful!');
+    } else {
+        loginErrorMessage.textContent = 'Invalid username or password. Please try again.';
+    }
+}
+
+function showLogin() {
+    document.getElementById('authForm').classList.add('hidden');
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('loginErrorMessage').textContent = '';
+}
+
+function showSignUp() {
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('authForm').classList.remove('hidden');
+    document.getElementById('errorMessage').textContent = '';
 }
