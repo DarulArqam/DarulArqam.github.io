@@ -82,3 +82,18 @@ function redirectToSignUp() {
     // Redirect to the signup page
     window.location.href = 'index.html';
 }
+
+function makeUserAdmin(username) {
+    const userData = JSON.parse(localStorage.getItem(username));
+
+    if (userData) {
+        userData.isAdmin = true;
+        localStorage.setItem(username, JSON.stringify(userData));
+        console.log(`${username} is now an admin!`);
+    } else {
+        console.error(`${username} not found in localStorage.`);
+    }
+}
+
+// Call the function with the desired username to make them an admin
+makeUserAdmin('Yoosif');
