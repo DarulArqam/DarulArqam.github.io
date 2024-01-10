@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: url('C:\Users\Yoosi\Documents\Website\Images\Masjid.avif') center/cover no-repeat;
+    background: url('DarulArqam.github.io\Images\Masjid.avif') center/cover no-repeat;
 }
 
 
@@ -71,7 +71,6 @@ button:hover {
     margin-top: 10px;
 }
 
-/* Additional styles for signup success page */
 #signupSuccess {
     background: #4caf50;
     color: #fff;
