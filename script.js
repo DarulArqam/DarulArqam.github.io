@@ -97,3 +97,15 @@ function makeUserAdmin(username) {
 
 // Call the function with the desired username to make them an admin
 makeUserAdmin('Yoosif');
+
+// script.js
+
+function checkAdminStatus(username) {
+    const userData = JSON.parse(localStorage.getItem(username));
+
+    if (userData && userData.isAdmin) {
+        return true; // User is an admin
+    } else {
+        return false; // User is not an admin
+    }
+}
