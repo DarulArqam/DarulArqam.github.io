@@ -61,6 +61,23 @@ function showSignUp() {
     document.getElementById('errorMessage').textContent = '';
 }
 
+function displayPortfolioGreeting() {
+    // Retrieve the username from localStorage (you may need to modify this based on your authentication flow)
+    const username = localStorage.getItem('username');
+
+    // Check if the username is available
+    if (username) {
+        // Update the placeholder with the username
+        document.getElementById('usernamePlaceholder').innerText = username;
+    } else {
+        // If username is not available, redirect to the login page
+        window.location.href = 'index.html';
+    }
+}
+
+// Call the function when the portfolio page loads
+window.onload = displayPortfolioGreeting;
+
 function redirectToSignUp() {
     // Redirect to the signup page
     window.location.href = 'index.html';
