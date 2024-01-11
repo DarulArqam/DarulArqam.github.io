@@ -1,18 +1,26 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getDatabase, ref, set, get } from "firebase/database";
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDLOuU9mrcuvp7uJdS0IvSjzyMIGNRITiw",
-  authDomain: "darularqam-777.firebaseapp.com",
-  databaseURL: "https://darularqam-777-default-rtdb.firebaseio.com",
-  projectId: "darularqam-777",
-  storageBucket: "darularqam-777.appspot.com",
-  messagingSenderId: "987048312565",
-  appId: "1:987048312565:web:d2c7b24f21b4e5ae6f0fbc",
-  measurementId: "G-HEN74K4WFR"
+    apiKey: "AIzaSyDLOuU9mrcuvp7uJdS0IvSjzyMIGNRITiw",
+    authDomain: "darularqam-777.firebaseapp.com",
+    databaseURL: "https://darularqam-777-default-rtdb.firebaseio.com",
+    projectId: "darularqam-777",
+    storageBucket: "darularqam-777.appspot.com",
+    messagingSenderId: "987048312565",
+    appId: "1:987048312565:web:d2c7b24f21b4e5ae6f0fbc",
+    measurementId: "G-HEN74K4WFR"
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const database = getDatabase(app);
 
 // Check if the user has signed up
 const hasSignedUp = localStorage.getItem('hasSignedUp');
@@ -36,15 +44,19 @@ function validateSignUp() {
         return;
     }
 
-    // Save user information to Firebase
-    database.ref('users/' + username).set({
-        username: username,
-        email: email,
-        password: password
-    });
+    // Create user in Firebase Authentication
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Save user information to Firebase Realtime Database
+            const userId = userCredential.user.uid;
+            saveUserDataToDatabase(userId, username, email, password);
 
-    // Redirect to portfolio page with username parameter
-    window.location.href = 'portfolio.html?user=' + username;
+            // Redirect to signup success page
+            window.location.href = `portfolio_${username}.html`;
+        })
+        .catch((error) => {
+            errorMessage.textContent = error.message;
+        });
 }
 
 function validateLogin() {
@@ -52,23 +64,41 @@ function validateLogin() {
     const loginPassword = document.getElementById('loginPassword').value;
     const loginErrorMessage = document.getElementById('loginErrorMessage');
 
-    // Retrieve user information from Firebase
-    database.ref('users/' + loginUsername).once('value').then(function(snapshot) {
-        const userData = snapshot.val();
+    // Retrieve user information from Firebase Realtime Database
+    const userData = await getUserDataFromDatabase(loginUsername);
 
-        // Simple validation: Check if entered credentials match stored credentials
-        if (userData && loginPassword === userData.password) {
-            // Redirect to portfolio page with username parameter
-            alert(`Login successful! Hello ${loginUsername}. Redirecting...`);
-            window.location.href = 'portfolio.html?user=' + loginUsername;
-        } else {
-            loginErrorMessage.textContent = 'Invalid username or password. Please try again.';
-        }
-    });
+    // Simple validation: Check if entered credentials match stored credentials
+    if (userData && loginPassword === userData.password) {
+        // Redirect to login success page
+        alert(`Login successful! Hello ${loginUsername}. Redirecting...`);
+        window.location.href = `portfolio_${loginUsername}.html`;
+    } else {
+        loginErrorMessage.textContent = 'Invalid username or password. Please try again.';
+    }
 }
 
-\\
+// Function to get user data from Firebase Realtime Database
+async function getUserDataFromDatabase(username) {
+    const userRef = ref(database, `users/${username}`);
+    const snapshot = await get(userRef);
 
+    if (snapshot.exists()) {
+        return snapshot.val();
+    } else {
+        return null;
+    }
+}
+
+function saveUserDataToDatabase(userId, username, email, password) {
+    // Save user information to Firebase Realtime Database
+    const userRef = ref(database, `users/${username}`);
+    set(userRef, {
+        username: username,
+        email: email,
+        password: password,
+        isAdmin: false
+    });
+}
 
 function showLogin() {
     document.getElementById('authForm').classList.add('hidden');
@@ -81,56 +111,3 @@ function showSignUp() {
     document.getElementById('authForm').classList.remove('hidden');
     document.getElementById('errorMessage').textContent = '';
 }
-
-function displayPortfolioGreeting() {
-    // Retrieve the username from local storage (you may need to modify this based on your authentication flow)
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-
-    // Check if the username is available
-    if (storedUser && storedUser.username) {
-        // Update the placeholder with the username
-        document.getElementById('usernamePlaceholder').innerText = storedUser.username;
-    } else {
-        // If username is not available, redirect to the login page
-        window.location.href = 'index.html';
-    }
-
-    // Check admin status after the page has loaded
-    const isAdmin = checkAdminStatus(storedUser.username);
-    console.log(`Is ${storedUser.username} an admin? ${isAdmin}`);
-}
-
-// Call the function when the portfolio page loads
-window.onload = displayPortfolioGreeting;
-
-function redirectToSignUp() {
-    // Redirect to the signup page
-    window.location.href = 'index.html';
-}
-
-function makeUserAdmin(username) {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-
-    if (storedUser && storedUser.username === username) {
-        storedUser.isAdmin = true;
-        localStorage.setItem('user', JSON.stringify(storedUser));
-        console.log(`${username} is now an admin!`);
-    } else {
-        console.error(`${username} not found in localStorage.`);
-    }
-}
-
-// Call the function with the desired username to make them an admin
-makeUserAdmin('Yoosif');
-
-function checkAdminStatus(username) {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-
-    if (storedUser && storedUser.isAdmin) {
-        return true; // User is an admin
-    } else {
-        return false; // User is not an admin
-    }
-}
-
-console.log(checkAdminStatus('Yoosif')); // Log the result for debugging
