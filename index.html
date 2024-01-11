@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -24,6 +24,26 @@
         </form>
     </div>
 
+    // Your web app's Firebase configuration
+    <script>    
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLOuU9mrcuvp7uJdS0IvSjzyMIGNRITiw",
+            authDomain: "darularqam-777.firebaseapp.com",
+            databaseURL: "https://darularqam-777-default-rtdb.firebaseio.com",
+            projectId: "darularqam-777",
+            storageBucket: "darularqam-777.appspot.com",
+            messagingSenderId: "987048312565",
+            appId: "1:987048312565:web:d2c7b24f21b4e5ae6f0fbc",
+            measurementId: "G-HEN74K4WFR"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+    <script>
+        
     <script src="script.js"></script>
 </body>
 </html>
