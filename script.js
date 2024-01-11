@@ -1,8 +1,3 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getDatabase, ref, set } from "firebase/database";
-
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDLOuU9mrcuvp7uJdS0IvSjzyMIGNRITiw",
@@ -16,9 +11,18 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const database = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// Check if the user has signed up
+const hasSignedUp = localStorage.getItem('hasSignedUp');
+
+// Display the appropriate form based on whether the user has signed up
+if (hasSignedUp) {
+    showLogin();
+} else {
+    showSignUp();
+}
 
 function validateSignUp() {
     const username = document.getElementById('username').value;
@@ -33,13 +37,14 @@ function validateSignUp() {
     }
 
     // Save user information to Firebase
-    set(ref(database, 'users/' + username), {
+    database.ref('users/' + username).set({
+        username: username,
         email: email,
         password: password
     });
 
-    // Redirect to signup success page
-    window.location.href = 'signup.html';
+    // Redirect to portfolio page with username parameter
+    window.location.href = 'portfolio.html?user=' + username;
 }
 
 function validateLogin() {
@@ -47,18 +52,23 @@ function validateLogin() {
     const loginPassword = document.getElementById('loginPassword').value;
     const loginErrorMessage = document.getElementById('loginErrorMessage');
 
-    // Retrieve user information from local storage
-    const storedUser = JSON.parse(localStorage.getItem('user'));
+    // Retrieve user information from Firebase
+    database.ref('users/' + loginUsername).once('value').then(function(snapshot) {
+        const userData = snapshot.val();
 
-    // Simple validation: Check if entered credentials match stored credentials
-    if (storedUser && loginUsername === storedUser.username && loginPassword === storedUser.password) {
-        // Redirect to login success page
-        alert(`Login successful! Hello ${storedUser.username}. Redirecting...`);
-        window.location.href = 'portfolio.html';
-    } else {
-        loginErrorMessage.textContent = 'Invalid username or password. Please try again.';
-    }
+        // Simple validation: Check if entered credentials match stored credentials
+        if (userData && loginPassword === userData.password) {
+            // Redirect to portfolio page with username parameter
+            alert(`Login successful! Hello ${loginUsername}. Redirecting...`);
+            window.location.href = 'portfolio.html?user=' + loginUsername;
+        } else {
+            loginErrorMessage.textContent = 'Invalid username or password. Please try again.';
+        }
+    });
 }
+
+\\
+
 
 function showLogin() {
     document.getElementById('authForm').classList.add('hidden');
