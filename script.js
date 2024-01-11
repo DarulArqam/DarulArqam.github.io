@@ -1,8 +1,7 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-analytics.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-auth.js";
-import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-database.js";
+// Import the Firebase SDK
+const firebase = require("https://www.gstatic.com/firebasejs/9.6.8/firebase-app.js");
+require("https://www.gstatic.com/firebasejs/9.6.8/firebase-auth.js");
+require("https://www.gstatic.com/firebasejs/9.6.8/firebase-database.js");
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -18,7 +17,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
