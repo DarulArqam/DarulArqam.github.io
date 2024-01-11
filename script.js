@@ -65,28 +65,35 @@ function validateLogin() {
     const loginErrorMessage = document.getElementById('loginErrorMessage');
 
     // Retrieve user information from Firebase Realtime Database
-    const userData = await getUserDataFromDatabase(loginUsername);
-
-    // Simple validation: Check if entered credentials match stored credentials
-    if (userData && loginPassword === userData.password) {
-        // Redirect to login success page
-        alert(`Login successful! Hello ${loginUsername}. Redirecting...`);
-        window.location.href = `portfolio_${loginUsername}.html`;
-    } else {
-        loginErrorMessage.textContent = 'Invalid username or password. Please try again.';
-    }
+    getUserDataFromDatabase(loginUsername).then((userData) => {
+        // Simple validation: Check if entered credentials match stored credentials
+        if (userData && loginPassword === userData.password) {
+            // Redirect to login success page
+            alert(`Login successful! Hello ${loginUsername}. Redirecting...`);
+            window.location.href = `portfolio_${loginUsername}.html`;
+        } else {
+            loginErrorMessage.textContent = 'Invalid username or password. Please try again.';
+        }
+    }).catch((error) => {
+        console.error(error);
+        loginErrorMessage.textContent = 'Error fetching user data. Please try again.';
+    });
 }
 
 // Function to get user data from Firebase Realtime Database
-async function getUserDataFromDatabase(username) {
-    const userRef = ref(database, `users/${username}`);
-    const snapshot = await get(userRef);
-
-    if (snapshot.exists()) {
-        return snapshot.val();
-    } else {
-        return null;
-    }
+function getUserDataFromDatabase(username) {
+    return new Promise((resolve, reject) => {
+        const userRef = ref(database, `users/${username}`);
+        get(userRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                resolve(snapshot.val());
+            } else {
+                resolve(null);
+            }
+        }).catch((error) => {
+            reject(error);
+        });
+    });
 }
 
 function saveUserDataToDatabase(userId, username, email, password) {
