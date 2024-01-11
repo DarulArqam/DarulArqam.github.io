@@ -1,7 +1,8 @@
 // Import the Firebase SDK
-const firebase = require("https://www.gstatic.com/firebasejs/9.6.8/firebase-app.js");
-require("https://www.gstatic.com/firebasejs/9.6.8/firebase-auth.js");
-require("https://www.gstatic.com/firebasejs/9.6.8/firebase-database.js");
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-analytics.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-auth.js";
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-database.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -17,11 +18,25 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
 // Check if the user has signed up
-const hasSignedUp = localStorage.getItem('hasSignedUp');
+const userId = getUserId(); // Assuming you have a function to get the user ID
+const hasSignedUp = await checkIfUserSignedUp(userId);
+
+async function checkIfUserSignedUp(userId) {
+    const userRef = ref(database, `users/${userId}`);
+    const snapshot = await get(userRef);
+    return snapshot.exists();
+}
+
+// Function to get the user ID from Firebase Authentication
+function getUserId() {
+    const user = auth.currentUser;
+    return user ? user.uid : null;
+}
 
 // Display the appropriate form based on whether the user has signed up
 if (hasSignedUp) {
@@ -43,7 +58,7 @@ function validateSignUp() {
     }
 
     // Create user in Firebase Authentication
-    createUserWithEmailAndPassword(auth, email, password)
+    firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
             // Save user information to Firebase Realtime Database
             const userId = userCredential.user.uid;
@@ -63,41 +78,35 @@ function validateLogin() {
     const loginErrorMessage = document.getElementById('loginErrorMessage');
 
     // Retrieve user information from Firebase Realtime Database
-    getUserDataFromDatabase(loginUsername).then((userData) => {
-        // Simple validation: Check if entered credentials match stored credentials
-        if (userData && loginPassword === userData.password) {
-            // Redirect to login success page
-            alert(`Login successful! Hello ${loginUsername}. Redirecting...`);
-            window.location.href = `portfolio_${loginUsername}.html`;
-        } else {
-            loginErrorMessage.textContent = 'Invalid username or password. Please try again.';
-        }
-    }).catch((error) => {
-        console.error(error);
-        loginErrorMessage.textContent = 'Error fetching user data. Please try again.';
-    });
+    getUserDataFromDatabase(loginUsername)
+        .then(userData => {
+            // Simple validation: Check if entered credentials match stored credentials
+            if (userData && loginPassword === userData.password) {
+                // Redirect to login success page
+                alert(`Login successful! Hello ${loginUsername}. Redirecting...`);
+                window.location.href = `portfolio_${loginUsername}.html`;
+            } else {
+                loginErrorMessage.textContent = 'Invalid username or password. Please try again.';
+            }
+        });
 }
 
 // Function to get user data from Firebase Realtime Database
-function getUserDataFromDatabase(username) {
-    return new Promise((resolve, reject) => {
-        const userRef = ref(database, `users/${username}`);
-        get(userRef).then((snapshot) => {
-            if (snapshot.exists()) {
-                resolve(snapshot.val());
-            } else {
-                resolve(null);
-            }
-        }).catch((error) => {
-            reject(error);
-        });
-    });
+async function getUserDataFromDatabase(username) {
+    const userRef = firebase.database().ref(`users/${username}`);
+    const snapshot = await userRef.once('value');
+
+    if (snapshot.exists()) {
+        return snapshot.val();
+    } else {
+        return null;
+    }
 }
 
 function saveUserDataToDatabase(userId, username, email, password) {
     // Save user information to Firebase Realtime Database
-    const userRef = ref(database, `users/${username}`);
-    set(userRef, {
+    const userRef = firebase.database().ref(`users/${username}`);
+    userRef.set({
         username: username,
         email: email,
         password: password,
