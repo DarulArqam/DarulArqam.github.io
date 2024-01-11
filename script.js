@@ -1,12 +1,24 @@
-// Check if the user has signed up
-const hasSignedUp = localStorage.getItem('hasSignedUp');
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getDatabase, ref, set } from "firebase/database";
 
-// Display the appropriate form based on whether the user has signed up
-if (hasSignedUp) {
-    showLogin();
-} else {
-    showSignUp();
-}
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDLOuU9mrcuvp7uJdS0IvSjzyMIGNRITiw",
+  authDomain: "darularqam-777.firebaseapp.com",
+  databaseURL: "https://darularqam-777-default-rtdb.firebaseio.com",
+  projectId: "darularqam-777",
+  storageBucket: "darularqam-777.appspot.com",
+  messagingSenderId: "987048312565",
+  appId: "1:987048312565:web:d2c7b24f21b4e5ae6f0fbc",
+  measurementId: "G-HEN74K4WFR"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const database = getDatabase(app);
 
 function validateSignUp() {
     const username = document.getElementById('username').value;
@@ -20,17 +32,11 @@ function validateSignUp() {
         return;
     }
 
-    // Create user object
-    const user = {
-        username: username,
+    // Save user information to Firebase
+    set(ref(database, 'users/' + username), {
         email: email,
-        password: password,
-        isAdmin: false // Set isAdmin to false initially
-    };
-
-    // Save user information to local storage
-    localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('hasSignedUp', true);
+        password: password
+    });
 
     // Redirect to signup success page
     window.location.href = 'signup.html';
